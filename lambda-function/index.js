@@ -38,7 +38,7 @@ exports.handler = async (event, context) => {
     var gps = process.execSync('perl exiftool -GPSPosition -q -s2 /tmp/image').toString();
     gps = gps.split(": ")[1];
     /*Make a thumbnail*/
-    process.execSync('./anytopnm /tmp/image|./pamscale -height 100|./pnmtojpeg > /tmp/tmpImage');
+    process.execSync('anytopnm /tmp/image|pamscale -height 100|pnmtojpeg > /tmp/tmpImage');
     /*Get the thumbnail ant put it in to the S3 bucket*/
     var vignette = fs.readFileSync('/tmp/tmpImage');
     console.log(vignette);

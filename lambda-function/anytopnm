@@ -411,11 +411,11 @@ case "$2" in
         ;;
 
     jfif )
-        ./jpegtopnm "$file"
+        jpegtopnm "$file"
         ;;
 
     png )
-        ./pngtopnm "$file"
+        pngtopnm "$file"
         ;;
 
     mda )

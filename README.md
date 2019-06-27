@@ -1,6 +1,14 @@
 # TX-Serverless-Computing-2019
+Presentaiton
+------------
+This project is a serverless version of [Steatite](https://github.com/Hypertopic/Steatite). 
+
+Its structure is as following. 
+
+![](./images/structure.PNG)
+
 Amazon Simple Storage Service(S3)
-=================================
+---------------------------------
 There are two S3 buckets in this project, one is 'tx-picture' for all the original images, another is 'tx-vignette' for thumbnails. 
 To create a bucket is simple, in the console, click on Create a bucket, enter the bucket name then click create. 
 
@@ -12,7 +20,7 @@ Then in the bucket, edit Block public access settings under the Tab Permissions.
 
 We also need to edit the bucket policy. 
 
->`{
+```{
     "Version": "2012-10-17",
     "Id": "Policy1557411810501",
     "Statement": [
@@ -32,14 +40,13 @@ We also need to edit the bucket policy.
             "Resource": "arn:aws:s3:::tx-picture/*"
         }
     ]
-}`
+}
+```
 
 ![](./images/bucket-policy.PNG)
 
-Lambda function
-===============
-Create a IAM role for Lambda
-----------------------------
+Create a IAM role for Lambda function
+-------------------------------------
 In the console of IAM, choose Create role. 
 The service of the role is Lambda. 
 
@@ -68,3 +75,38 @@ Set time out to 30 secondes.
 ![](./images/set-timeout.PNG)
 
 Then upload the zip file of the folder [lambda function](./lambda-function). Please make sure that you zip all the files in the folder but not the folder itself. 
+
+The deployment packages of Exiftool et Netpbm is created by using EC2. [Documentation](https://aws.amazon.com/premiumsupport/knowledge-center/lambda-linux-binary-package/?nc1=h_ls)
+
+In order to run Netpbm sucessfully, we also need to edit the Environment variables in Lambda. To do so, we need to run `echo $PATH` in the terminal of Cloud9. Copy the PATH and add `:/var/task` at the end. 
+
+![](./images/PATHlambda.PNG)
+
+DynamoDB
+--------
+Create two tables. One is StetiteMeta with `etag` being its primary key, another is SteatiteName with `filename` being its primary key. 
+
+![](./images/create-db.PNG)
+![](./images/table-meta.PNG)
+![](./images/table-name.PNG)
+
+API Gateway
+-----------
+
+
+Possible errors and solutions
+---------------
+* PATH doesn't work. Delete the PATh, then add `./` for Netpbm, add `./` also for anytopnm. 
+```
+process.execSync('./anytopnm /tmp/image|./pamscale -height 100|./pnmtojpeg > /tmp/tmpImage');
+```
+```
+    jfif )
+        ./jpegtopnm "$file"
+        ;;
+
+    png )
+        ./pngtopnm "$file"
+        ;;
+```
+* 'Permission denied'. In the terminal of Cloud9, run a `chmod 755 *`. 
